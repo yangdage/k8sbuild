@@ -1,0 +1,36 @@
+# 配置部署信息
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata: 
+  name: appname
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: appname
+    spec:
+      containers:
+      - name: appname
+        image: reg.xxx.com/project/appname:v2.0-8-g7ddb390
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8083
+        volumeMounts:
+        - mountPath: /data/logs
+          name: appname-volume
+        command: ["/bin/sh","-c"] #自定义命令
+        args: ["nohup ./appname -conf ./config/prod"]
+      volumes:
+      - hostPath:
+          path: /data/logs
+        name: appname-volume

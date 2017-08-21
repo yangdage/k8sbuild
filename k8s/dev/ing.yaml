@@ -1,0 +1,14 @@
+# 配置外网访问入口，集群内部服务不用配置
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: appname-ing
+spec:
+  rules:
+  - host: appname.xxx.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: appname
+          servicePort: 80
