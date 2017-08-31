@@ -92,23 +92,14 @@ _init_context(){
 # 初始化namespace
 _init_namespace(){
     # 根据命令行参数判断是否切换namespace
-    all=`kubectl get namespace|awk 'NR>1 {print $1}'`
-    namespace=""
+    namespace="$1"
     
-    for tmp in $all
-    do
-      if [ "$1"x = "$tmp"x ];then
-        namespace=$tmp
-        break
-      fi
-    done
-
     if [ "$namespace"x != ""x ];then
     	kubectl config set-context `kubectl config current-context` --namespace=$namespace > /dev/null
   	fi
 
 	# 查询集群namespace等信息
-  	kubectl config view|grep -A 1 "cluster: ${context}"|sed "s/ \+//g"
+  	kubectl config view|sed -n "/cluster: ${context}/,/name: ${context}/p"|sed "s/ \+//g"
 }
 
 # 前端编译任务+后端编译服务器平台可执行文件
